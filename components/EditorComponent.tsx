@@ -13,6 +13,8 @@ import { Button } from './ui/button'
 import { Play } from 'lucide-react'
 import { codeSnippets, languageOptions } from '@/config/config'
 import { selectLanguagesOptionProps } from './SelectLanguages'
+import TimerComponent from './TimerComponent'
+
 
 export default function EditorComponent() {
     const {theme} = useTheme();
@@ -37,9 +39,10 @@ export default function EditorComponent() {
     }
 
   return (
-    <div className='min-h-screen dark:bg-slate-900 rounded-2xl shadow-2xl py-6 px-8'>
+    <div className='min-h-screen dark:bg-black rounded-2xl shadow-2xl py-6 px-8'>
         <div className='flex items-center justify-between pb-3'>
             <h2 className="scroll-m-20 border-b text-2xl font-semibold tracking-tight first:mt-0">Mock Interview Interface</h2>
+            <TimerComponent />
             <div className='flex items-center space-x-2'>
                 <ModeTogglButton/>
                 <div className='w-[150px]'>
@@ -47,7 +50,7 @@ export default function EditorComponent() {
                 </div>    
             </div>
         </div>
-        <div className='bg-slate-400 dark:bg-slate-950 p-3 rounded-2xl'>
+        <div className='bg-slate-400 dark:bg-black p-3 rounded-2xl'>
             <ResizablePanelGroup direction="horizontal" className="max-w-full rounded-lg border md:min-w-[450px]">
                 <ResizablePanel defaultSize={50} minSize={35}>
                     <Editor theme={theme === 'dark'?"vs-dark":"vs-light"}

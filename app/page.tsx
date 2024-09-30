@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function Home() {
   return (
-    <div className='dark:bg-slate-800 bg-slate-300 p-8'>
+    <div className='dark:bg-black bg-slate-300 p-8'>
       <EditorComponent/>
     </div>
   )
