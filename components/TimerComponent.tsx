@@ -49,7 +49,7 @@ const TimerComponent = () => {
       ) : (
         <div className="flex items-center bg-black p-2 rounded-lg">
           <button
-            className="text-white bg-black rounded-full px-3 py-2 hover:bg-slate-600"
+            className="text-white bg-black rounded-full px-3 py-2"
             onClick={toggleTimer}
           >
             {isRunning ? <Pause size={16} /> : <Play size={16} />}
