@@ -21,7 +21,7 @@ export default function EditorComponent() {
     const [sourceCode,setSourceCode] = useState(codeSnippets['Python']);
     const [languageOption,setLanguageOption] = useState(languageOptions[0]);
     const editor_reference = useRef(null);
-
+    console.log(languageOption)
     function handleEditorDidMount(editor:any){
         editor_reference.current = editor;
         editor.focus();
@@ -35,7 +35,7 @@ export default function EditorComponent() {
 
     function onSelect(value: selectLanguagesOptionProps){
         setLanguageOption(value);
-        setSourceCode(codeSnippets[value])
+        setSourceCode(codeSnippets[value.language])
     }
 
   return (

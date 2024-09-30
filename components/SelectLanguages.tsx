@@ -17,8 +17,6 @@ export default function SelectLanguages({
   {onSelect:any;
     selectedLanguageOption: selectLanguagesOptionProps;
   }) {
-  // const [selected, setSelected] = useState(languageOptions[0])
-
   return (
     <Listbox value={selectedLanguageOption} onChange={onSelect}>
       <div className="relative">
