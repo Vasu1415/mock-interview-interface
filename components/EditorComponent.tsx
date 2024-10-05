@@ -1,83 +1,158 @@
-'use client'
-import React, {useState , useRef} from 'react'
-import { ModeTogglButton } from './mode-toggle-button'
-import SelectLanguages from './SelectLanguages'
-import Editor from '@monaco-editor/react'
+"use client";
+import React, { useRef, useState } from "react";
+import { ModeToggleButton } from "./mode-toggle-button";
+import SelectLanguages, {
+  selectedLanguageOptionProps,
+} from "./SelectLanguages";
 import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-  } from "@/components/ui/resizable"  
-import { useTheme } from 'next-themes'
-import { Button } from './ui/button'
-import { Play } from 'lucide-react'
-import { codeSnippets, languageOptions } from '@/config/config'
-import { selectLanguagesOptionProps } from './SelectLanguages'
-import TimerComponent from './TimerComponent'
-
-
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
+import Editor from "@monaco-editor/react";
+import { useTheme } from "next-themes";
+import { Button } from "./ui/button";
+import { Loader, Play, TriangleAlert } from "lucide-react";
+import { codeSnippets, languageOptions } from "@/config/config";
+import { compileCode } from "@/actions/compile";
+import toast from "react-hot-toast";
+import TimerComponent from "./TimerComponent";
+export interface CodeSnippetsProps {
+  [key: string]: string;
+}
 export default function EditorComponent() {
-    const {theme} = useTheme();
-    const [sourceCode,setSourceCode] = useState(codeSnippets['Python']);
-    const [languageOption,setLanguageOption] = useState(languageOptions[0]);
-    const editor_reference = useRef(null);
-    console.log(languageOption)
-    function handleEditorDidMount(editor:any){
-        editor_reference.current = editor;
-        editor.focus();
-    }
+  const { theme } = useTheme();
+  const [sourceCode, setSourceCode] = useState(codeSnippets["python"]);
+  const [languageOption, setLanguageOption] = useState(languageOptions[0]);
+  const [loading, setLoading] = useState(false);
+  const [output, setOutput] = useState([]);
+  const [error, seterror] = useState(false);
 
-    function handleOnChange(value: string|undefined){
-        if (value){
-            setSourceCode(value);
-        }
+  const editorRef = useRef(null);
+  function handleEditorDidMount(editor: any) {
+    editorRef.current = editor;
+    editor.focus();
+  }
+  function handleOnchange(value: string | undefined) {
+    if (value) {
+      setSourceCode(value);
     }
+  }
+  function onSelect(value: selectedLanguageOptionProps) {
+    setLanguageOption(value);
+    setSourceCode(codeSnippets[value.language]);
+  }
 
-    function onSelect(value: selectLanguagesOptionProps){
-        setLanguageOption(value);
-        setSourceCode(codeSnippets[value.language])
+  async function executeCode() {
+    setLoading(true);
+    const requestData = {
+      language: languageOption.language,
+      version: languageOption.version,
+      files: [
+        {
+          content: sourceCode,
+        },
+      ],
+    };
+    try {
+      const result = await compileCode(requestData);
+      setOutput(result.run.output.split("\n"));
+      console.log(result);
+      setLoading(false);
+      seterror(false);
+      toast.success("Compiled Successfully");
+    } catch (error) {
+      seterror(true);
+      setLoading(false);
+      toast.error("Failed to compile the Code");
+      console.log(error);
     }
-
+  }
   return (
-    <div className='min-h-screen dark:bg-black rounded-2xl shadow-2xl py-6 px-8'>
-        <div className='flex items-center justify-between pb-3'>
-            <h2 className="scroll-m-20 border-b text-2xl font-semibold tracking-tight first:mt-0">Mock Interview Interface</h2>
-            <TimerComponent />
-            <div className='flex items-center space-x-2'>
-                <ModeTogglButton/>
-                <div className='w-[150px]'>
-                    <SelectLanguages onSelect={onSelect} selectedLanguageOption= {languageOption}/>        
-                </div>    
-            </div>
+    <div className="min-h-screen bg-slate-300 dark:bg-black rounded-2xl shadow-2xl py-6 px-8">
+      {/* EDITOR HEADER */}
+      <div className="flex items-center justify-between pb-3">
+        <h2 className="scroll-m-20  text-2xl font-semibold tracking-tight first:mt-0">
+          Mock Interview Interface
+        </h2>
+        <TimerComponent/>
+        <div className="flex items-center space-x-2 ">
+          <ModeToggleButton />
+          <div className="w-[230px]">
+            <SelectLanguages
+              onSelect={onSelect}
+              selectedLanguageOption={languageOption}
+            />
+          </div>
         </div>
-        <div className='bg-slate-400 dark:bg-black p-3 rounded-2xl'>
-            <ResizablePanelGroup direction="horizontal" className="max-w-full rounded-lg border md:min-w-[450px]">
-                <ResizablePanel defaultSize={50} minSize={35}>
-                    <Editor theme={theme === 'dark'?"vs-dark":"vs-light"}
-                            onChange={handleOnChange} 
-                            value={sourceCode} 
-                            onMount={handleEditorDidMount} height="100vh" 
-                            defaultLanguage={languageOption.language} 
-                            defaultValue={sourceCode} 
-                            language={languageOption.language}/>
-                </ResizablePanel>
-                <ResizableHandle withHandle/>
-                <ResizablePanel defaultSize={50} minSize={35}>
-                    <div className="space-y-3 bg-slate-300 dark:bg-slate-900 min-h-screen">
-                        <div className='flex items-center justify-between bg-slate-400 dark:bg-slate-950 px-6 py-2'>
-                            <h2>Result</h2>
-                            <Button size={"sm"} className='dark:bg-purple-500 dark:hover:bg-purple-600 text-slate-100 bg-slate-800 hover:bg-slate-900'>
-                                <Play className="w-4 h-4 mr-2" />
-                                <span>Execute Code</span>
-                            </Button>
-                        </div>
-                        <div className='px-6'>
-                            <h2 className=''>Hello</h2>
-                        </div>
-                    </div>
-                </ResizablePanel>
-            </ResizablePanelGroup>
+      </div>
+      {/* EDITOR  */}
+      <div className="bg-slate-300 dark:bg-black p-3 rounded-2xl">
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="w-full rounded-lg border dark:bg-black"
+        >
+          <ResizablePanel defaultSize={50} minSize={35}>
+            <Editor
+              theme={theme === "dark" ? "vs-dark" : "vs-light"}
+              height="100vh"
+              defaultLanguage={languageOption.language}
+              defaultValue={sourceCode}
+              onMount={handleEditorDidMount}
+              value={sourceCode}
+              onChange={handleOnchange}
+              language={languageOption.language}
+            />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50} minSize={35}>
+            <div className="space-y-3 bg-slate-300 dark:bg-black min-h-screen">
+              <div className="flex items-center justify-between  bg-slate-300 dark:bg-black px-6 py-2">
+                <h2 className="font-bold">Code Results</h2>
+                {loading ? (
+                  <Button
+                    disabled
+                    size={"sm"}
+                    className="dark:bg-purple-600 dark:hover:bg-purple-700 text-slate-100 bg-black "
+                  >
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                    <span className="font-bold">Fetching Results...</span>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={executeCode}
+                    size={"sm"}
+                    className="dark:bg-purple-600 dark:hover:bg-purple-700 text-slate-100 bg-black "
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    <span className="font-bold">Execute Code</span>
+                  </Button>
+                )}
+              </div>
+              <div className=" px-6 space-y-2">
+                {error ? (
+                  <div className="flex items-center space-x-2 text-red-500 border border-red-600 px-6 py-6">
+                    <TriangleAlert className="w-5 h-5 mr-2 flex-shrink-0" />
+                    <p className="text-xs">
+                      Failed to Compile the Code , Please try again !
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {output.map((item) => {
+                      return (
+                        <p className="text-sm font-bold" key={item}>
+                          {item}
+                        </p>
+                      );
+                    })}
+                  </>
+                )}
+              </div>
             </div>
-        </div>
-  )
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
+    </div>
+  );
 }

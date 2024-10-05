@@ -1,5 +1,4 @@
 import EditorComponent from '@/components/EditorComponent'
-// import { ModeTogglButton } from '@/components/mode-toggle-button'
 import React from 'react'
 
 export default function Home() {

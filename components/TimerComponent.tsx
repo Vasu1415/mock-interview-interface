@@ -36,17 +36,17 @@ const TimerComponent = () => {
 
   return (
     <div className="flex items-center space-x-4">
-        <div className="flex items-center bg-black p-2 rounded-lg">
+        <div className="flex items-center dark:bg-black p-2 rounded-lg">
           <button
-            className="text-white bg-black rounded-full px-3 py-2"
+            className=" text-black  dark:text-white dark:bg-black rounded-full px-3 py-2"
             onClick={toggleTimer}
           >
             {isRunning ? <Pause size={16} /> : <Play size={16} />}
           </button>
-          <span className="ml-4 text-white text-lg font-mono">{formatTime(seconds)}</span>
+          <span className="ml-4 text-black  dark:text-white text-lg font-mono">{formatTime(seconds)}</span>
 
           <button
-            className="text-white bg-black rounded-full px-3 py-2 ml-4"
+            className="text-black dark:text-white dark:bg-black rounded-full px-3 py-2 ml-4"
             onClick={resetTimer}
           >
             <RefreshCcw size={16} />
