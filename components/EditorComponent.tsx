@@ -68,6 +68,7 @@ export default function EditorComponent() {
       setError(true);
       setLoading(false);
       toast.error("Failed to compile the Code");
+      console.log(error)
     }
   }
 
