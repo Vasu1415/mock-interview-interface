@@ -18,7 +18,7 @@ export default function SelectLanguages({
   onSelect,
   selectedLanguageOption,
 }: {
-  onSelect: any;
+  onSelect: (option: LanguageOption) => void;
   selectedLanguageOption: selectedLanguageOptionProps;
 }) {
 
@@ -60,7 +60,7 @@ export default function SelectLanguages({
                     }
                     value={item}
                   >
-                    {({ selected, active }) => (
+                    {({ selected }) => (
                       <>
                         <div className="flex items-center">
                           <span
