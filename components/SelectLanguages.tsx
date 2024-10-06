@@ -19,7 +19,7 @@ export default function SelectLanguages({
   selectedLanguageOption,
 }: {
   onSelect?: (option: LanguageOption) => void;
-  selectedLanguageOption: selectedLanguageOptionProps;
+  selectedLanguageOption?: selectedLanguageOptionProps;
 }) {
 
   return (
