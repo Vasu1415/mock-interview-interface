@@ -18,7 +18,7 @@ export default function SelectLanguages({
   onSelect,
   selectedLanguageOption,
 }: {
-  onSelect: (option: LanguageOption) => void;
+  onSelect?: (option: LanguageOption) => void;
   selectedLanguageOption: selectedLanguageOptionProps;
 }) {
 
