@@ -7,7 +7,8 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import Editor, { Monaco } from "@monaco-editor/react";
+import Editor, { OnMount } from "@monaco-editor/react";
+import * as monaco from "monaco-editor"; // Importing Monaco types
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import { Loader, Play, TriangleAlert } from "lucide-react";
@@ -28,13 +29,14 @@ export default function EditorComponent() {
   const [output, setOutput] = useState<string[]>([]);
   const [error, setError] = useState(false);
 
-  const editorRef = useRef<Monaco | null>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
-  function handleEditorDidMount(editor: Monaco) {
+  // Update this function to correctly reference the editor instance
+  const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
     editor.getModel()?.setValue(sourceCode); // Load the initial source code into the editor
-    editor.focus();
-  }
+    editor.focus(); // Focus on the editor
+  };
 
   function handleOnChange(value: string | undefined) {
     if (value) {
@@ -102,7 +104,7 @@ export default function EditorComponent() {
               height="100vh"
               defaultLanguage={languageOption.language}
               defaultValue={sourceCode}
-              onMount={handleEditorDidMount}
+              onMount={handleEditorDidMount} // Attach the editor instance when mounted
               value={sourceCode}
               onChange={handleOnChange}
               language={languageOption.language}
