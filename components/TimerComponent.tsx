@@ -4,17 +4,19 @@ import { Play, Pause, RefreshCcw } from 'lucide-react';
 const TimerComponent = () => {
   const [seconds, setSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null); // Update the type here
 
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setSeconds((prev) => prev + 1);
-      }, 1000);
+      }, 1000) as unknown as NodeJS.Timeout; // Ensure correct type in Node.js
     } else if (!isRunning && seconds !== 0) {
-      clearInterval(intervalRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     }
-    return () => clearInterval(intervalRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [isRunning]);
 
   const toggleTimer = () => {
@@ -38,12 +40,12 @@ const TimerComponent = () => {
     <div className="flex items-center space-x-4">
         <div className="flex items-center dark:bg-black p-2 rounded-lg">
           <button
-            className=" text-black  dark:text-white dark:bg-black rounded-full px-3 py-2"
+            className="text-black dark:text-white dark:bg-black rounded-full px-3 py-2"
             onClick={toggleTimer}
           >
             {isRunning ? <Pause size={16} /> : <Play size={16} />}
           </button>
-          <span className="ml-4 text-black  dark:text-white text-lg font-mono">{formatTime(seconds)}</span>
+          <span className="ml-4 text-black dark:text-white text-lg font-mono">{formatTime(seconds)}</span>
 
           <button
             className="text-black dark:text-white dark:bg-black rounded-full px-3 py-2 ml-4"
