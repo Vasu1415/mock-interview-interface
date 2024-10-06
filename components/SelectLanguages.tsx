@@ -14,12 +14,13 @@ export type selectedLanguageOptionProps = {
   aliases: string[];
   runtime?: string;
 };
+
 export default function SelectLanguages({
   onSelect,
   selectedLanguageOption,
 }: {
-  onSelect?: (option: LanguageOption) => void;
-  selectedLanguageOption?: selectedLanguageOptionProps;
+  onSelect: (option: selectedLanguageOptionProps) => void; 
+  selectedLanguageOption: selectedLanguageOptionProps; 
 }) {
 
   return (
@@ -27,7 +28,7 @@ export default function SelectLanguages({
       {({ open }) => (
         <>
           <div className="relative">
-            <Listbox.Button className=" font-bold relative w-full cursor-default rounded-md bg-transparent py-2 pl-3 pr-10 text-left text-black dark:text-white shadow-sm ring-1 ring-inset ring-black dark:ring-gray-300 focus:outline-none sm:text-sm sm:leading-6">
+            <Listbox.Button className="font-bold relative w-full cursor-default rounded-md bg-transparent py-2 pl-3 pr-10 text-left text-black dark:text-white shadow-sm ring-1 ring-inset ring-black dark:ring-gray-300 focus:outline-none sm:text-sm sm:leading-6">
               <span className="flex items-center font-bold">
                 <span className="ml-3 block truncate capitalize">
                   {selectedLanguageOption.language}
