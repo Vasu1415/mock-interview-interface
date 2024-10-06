@@ -12,11 +12,11 @@ import {
 import Editor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
-import { Loader, Play, TriangleAlert } from "lucide-react";
+import { Loader, Play } from "lucide-react";
 import { codeSnippets, languageOptions } from "@/config/config";
 import { compileCode } from "@/actions/compile";
-import toast from "react-hot-toast";
 import TimerComponent from "./TimerComponent";
+import * as monaco from 'monaco-editor';
 export interface CodeSnippetsProps {
   [key: string]: string;
 }
@@ -29,7 +29,7 @@ export default function EditorComponent() {
   const [error, seterror] = useState(false);
 
   const editorRef = useRef(null);
-  function handleEditorDidMount(editor: any) {
+  function handleEditorDidMount(editor: monaco.editor.IStandaloneCodeEditor) {
     editorRef.current = editor;
     editor.focus();
   }
@@ -57,15 +57,13 @@ export default function EditorComponent() {
     try {
       const result = await compileCode(requestData);
       setOutput(result.run.output.split("\n"));
-      console.log(result);
       setLoading(false);
       seterror(false);
-      toast.success("Compiled Successfully");
+
     } catch (error) {
       seterror(true);
       setLoading(false);
-      toast.error("Failed to compile the Code");
-      console.log(error);
+      console.log(error)
     }
   }
   return (
@@ -130,14 +128,6 @@ export default function EditorComponent() {
                 )}
               </div>
               <div className=" px-6 space-y-2">
-                {error ? (
-                  <div className="flex items-center space-x-2 text-red-500 border border-red-600 px-6 py-6">
-                    <TriangleAlert className="w-5 h-5 mr-2 flex-shrink-0" />
-                    <p className="text-xs">
-                      Failed to Compile the Code , Please try again !
-                    </p>
-                  </div>
-                ) : (
                   <>
                     {output.map((item) => {
                       return (
@@ -147,7 +137,6 @@ export default function EditorComponent() {
                       );
                     })}
                   </>
-                )}
               </div>
             </div>
           </ResizablePanel>
